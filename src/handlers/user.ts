@@ -1,6 +1,17 @@
 import * as firebase from 'firebase';
+import * as Busboy from 'busboy';
+import * as os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as uuid from 'uuid/v4';
 import { db } from '../utils/admin';
+import { config } from '../utils/config';
 import { RequestHandler } from 'express';
+import admin = require('firebase-admin');
+
+// FIREBASE STORAGE URL: https://firebasestorage.googleapis.com/v0/b/socializer-e77ce.appspot.com/o/filepath here?alt=media&token=tokenhereifpossible
+
+const defaultProfilePicture = 'no-img.png';
 
 export const signUp: RequestHandler = async (req, res) => {
   const newUser = {
@@ -25,6 +36,7 @@ export const signUp: RequestHandler = async (req, res) => {
       const userDetails = {
         userHandle: newUser.userHandle,
         email: newUser.email,
+        profileImageUrl: `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${defaultProfilePicture}?alt=media`,
         createdAt: new Date().toISOString(),
         userId
       };
@@ -81,4 +93,47 @@ export const signIn: RequestHandler = async (req, res) => {
         return res.status(500).json(err);
     }
   }
+};
+
+export const uploadUserImage: RequestHandler = async (req, res) => {
+  const busboy = new Busboy({ headers: req.headers });
+  let fileToUpload: { filepath: string; fileName: string; mimetype: string };
+
+  busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    if (!mimetype.startsWith('image')) {
+      res.status(400).json({
+        error: 'Bad request. Only files of mimetype image are allowed.'
+      });
+      return;
+    }
+    const fileExtension = filename.split('.').pop();
+    const fileName = `${uuid()}.${fileExtension}`;
+    const filepath = path.join(os.tmpdir(), fileName);
+    fileToUpload = { filepath, fileName, mimetype };
+
+    file.pipe(fs.createWriteStream(filepath));
+  });
+
+  busboy.on('finish', async () => {
+    try {
+      await admin
+        .storage()
+        .bucket()
+        .upload(fileToUpload.filepath, {
+          resumable: false,
+          metadata: {
+            contentType: fileToUpload.mimetype
+          }
+        });
+      const fileUrl = `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${fileToUpload.fileName}?alt=media`;
+      await db
+        .doc(`users/${req.body.userHandle}`)
+        .update({ profileImageUrl: fileUrl });
+      res.status(200).json({ message: 'File successfully uploaded' });
+    } catch (err) {
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+
+  busboy.end(req.body);
 };
