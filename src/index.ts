@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as firebase from 'firebase';
 import { config } from './utils/config';
 import { getPosts, addPost } from './handlers/posts';
-import { signUp, signIn } from './handlers/user';
+import { signUp, signIn, uploadUserImage } from './handlers/user';
 import { tokenAuth } from './utils/tokenAuth';
 
 const app = express();
@@ -27,5 +27,7 @@ app.post('/signout', async (req, res) => {
     res.json(err);
   }
 });
+
+app.post('/user/image', tokenAuth, uploadUserImage);
 
 export const api = functions.https.onRequest(app);
