@@ -24,7 +24,9 @@ export const tokenAuth: RequestHandler = async (req, res, next) => {
         res.status(403).json(err);
       }
     } else {
-      res.status(403).json({ error: 'Unauthorized user' });
+      res
+        .status(403)
+        .json({ error: 'Invalid token or no authorization header provided' });
     }
   } else {
     return next();
