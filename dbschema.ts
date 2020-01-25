@@ -1,11 +1,25 @@
 // For reference. I guess GraphQl would be nice here
 
 type DBSchema = {
-  posts: {
-    userHandle: string;
-    body: string;
-    postedAt: string;
-    numLikes: number;
-    numComments: number;
-  };
+  users: [
+    {
+      userId: string;
+      email: string;
+      userHandle: string;
+      createdAt: string;
+      imageUrl: string;
+      bio: string;
+      website: string;
+      location: string;
+    }
+  ];
+  posts: [
+    {
+      userHandle: string;
+      body: string;
+      postedAt: string;
+      likes: { userHandle: string; }[];
+      comments: { userHandle: string; body: string;}[];
+    }
+  ];
 };
