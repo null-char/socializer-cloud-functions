@@ -2,6 +2,9 @@
 **/*.js
 **/*.js.map
 
+# Log files
+firebase-debug.log
+
 # Typescript v1 declaration files
 typings/
 
