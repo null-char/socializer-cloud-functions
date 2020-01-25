@@ -137,3 +137,18 @@ export const uploadUserImage: RequestHandler = async (req, res) => {
 
   busboy.end(req.body);
 };
+
+export const addUserData: RequestHandler = async (req, res) => {
+  const userDetails = {
+    bio: req.body.bio,
+    website: req.body.website,
+    location: req.body.location
+  };
+
+  try {
+    await db.doc(`users/${req.body.userHandle}`).update(userDetails);
+    res.status(200).json({ message: 'User details added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
