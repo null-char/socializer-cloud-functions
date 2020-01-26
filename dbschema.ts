@@ -17,9 +17,9 @@ type DBSchema = {
     {
       userHandle: string;
       body: string;
-      postedAt: string;
-      likes: { userHandle: string; }[];
-      comments: { userHandle: string; body: string;}[];
+      createdAt: string;
+      likes: { userHandle: string }[];
+      comments: { userHandle: string; body: string }[];
     }
   ];
 };
