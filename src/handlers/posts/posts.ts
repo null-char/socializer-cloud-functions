@@ -51,9 +51,7 @@ export const addPost: RequestHandler = async (req, res) => {
 
   try {
     const postDoc = await db.collection('posts').add(newPost);
-    return res.json({
-      message: `Document added successfully with id ${postDoc.id}`
-    });
+    return res.json({ postId: postDoc.id, ...newPost });
   } catch (err) {
     return res
       .status(500)
