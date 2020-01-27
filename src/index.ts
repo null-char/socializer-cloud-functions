@@ -39,7 +39,11 @@ app.delete('/posts/unlike-post/:postId', tokenAuth, unlikePost);
 
 // Add/Remove comments to user posts
 app.post('/posts/add-comment', tokenAuth, addComment);
-app.delete('/posts/remove-comment/:postId', tokenAuth, removeComment);
+app.delete(
+  '/posts/remove-comment/:postId/:commentId',
+  tokenAuth,
+  removeComment
+);
 
 // Add/Remove replies to comments
 app.post('/posts/add-reply', tokenAuth, replyToComment);
