@@ -46,6 +46,7 @@ export const addPost: RequestHandler = async (req, res) => {
   const newPost = {
     body: req.body.body,
     userHandle: req.body.user.userHandle,
+    userProfile: req.body.user.profileImageUrl,
     createdAt: new Date().toISOString()
   };
 

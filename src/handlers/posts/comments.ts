@@ -8,7 +8,7 @@ export const addComment: RequestHandler = async (req, res) => {
       .json({ error: 'Bad request. Make sure to specify post id.' });
 
   const newComment = {
-    userData: req.body.user,
+    userHandle: req.body.user.userHandle,
     body: req.body.commentBody,
     createdAt: new Date().toISOString()
   };
