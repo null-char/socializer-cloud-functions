@@ -16,24 +16,38 @@ import {
   likePost,
   unlikePost,
   addComment,
-  removeComment
+  removeComment,
+  replyToComment,
+  removeReplyToComment
 } from './handlers/index';
 import { tokenAuth } from './utils/tokenAuth';
 
 const app = express();
 firebase.initializeApp(config);
 
+// Get all posts or one post
 app.get('/posts', getAllPosts);
 app.get('/posts/:postId', getPost);
 
+// Add/Remove user posts
 app.post('/posts', tokenAuth, addPost);
 app.delete('/posts/:postId', tokenAuth, removePost);
 
-app.post('/posts/likePost', tokenAuth, likePost);
-app.post('/posts/unlikePost', tokenAuth, unlikePost);
+// Add/Remove likes to user posts
+app.post('/posts/like-post', tokenAuth, likePost);
+app.delete('/posts/unlike-post/:postId', tokenAuth, unlikePost);
 
-app.post('/posts/addComment', tokenAuth, addComment);
-app.delete('/posts/removeComment', tokenAuth, removeComment);
+// Add/Remove comments to user posts
+app.post('/posts/add-comment', tokenAuth, addComment);
+app.delete('/posts/remove-comment/:postId', tokenAuth, removeComment);
+
+// Add/Remove replies to comments
+app.post('/posts/add-reply', tokenAuth, replyToComment);
+app.delete(
+  '/posts/remove-reply/:postId/:commentId/:replyId',
+  tokenAuth,
+  removeReplyToComment
+);
 
 // SIGN UP
 // We'll do stuff like checking if email is not blank or if password is a certain length in the client side code
