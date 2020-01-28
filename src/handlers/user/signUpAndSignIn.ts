@@ -46,6 +46,7 @@ export const signUp: RequestHandler = async (req, res) => {
       if (err.code === 'auth/email-already-in-use') {
         return res.status(400).json({ email: 'Email is already in use' });
       } else {
+        console.error(err);
         return res.status(500).json({ error: err.code });
       }
     }
@@ -82,6 +83,7 @@ export const signIn: RequestHandler = async (req, res) => {
       case 'auth/user-not-found':
         return res.status(404).json({ user: 'User not found' });
       default:
+        console.error(err);
         return res.status(500).json(err);
     }
   }

@@ -44,6 +44,7 @@ export const uploadUserImage: RequestHandler = async (req, res) => {
         .update({ profileImageUrl: fileUrl });
       res.status(200).json({ message: 'File successfully uploaded' });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ error: 'Server error' });
     }
   });

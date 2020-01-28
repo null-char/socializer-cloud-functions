@@ -13,6 +13,7 @@ export const followUser: RequestHandler = async (req, res) => {
       message: `User with user id ${req.body.user.userHandle} followed user with user id ${req.body.userHandle} successfully`
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -29,6 +30,7 @@ export const unfollowUser: RequestHandler = async (req, res) => {
       message: `User with id ${req.body.user.userHandle} unfollowed user with id ${req.params.userHandle} successfully`
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -41,6 +43,7 @@ export const getFollowers: RequestHandler = async (req, res) => {
       .get();
     res.status(200).json(followersCollection.docs);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
