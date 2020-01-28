@@ -9,6 +9,9 @@ import {
   setUserData,
   followUser,
   unfollowUser,
+  getAllUserData
+} from './handlers/user/index';
+import {
   getAllPosts,
   getPost,
   addPost,
@@ -19,7 +22,7 @@ import {
   removeComment,
   replyToComment,
   removeReplyToComment
-} from './handlers/index';
+} from './handlers/posts/index';
 import { tokenAuth } from './utils/tokenAuth';
 
 const app = express();
@@ -64,6 +67,7 @@ app.post('/signout', async (req, res) => {
     await firebase.auth().signOut();
     res.status(200).json({ message: 'Signed out successfully' });
   } catch (err) {
+    console.error(err);
     res.json(err);
   }
 });
@@ -72,5 +76,6 @@ app.post('/user/image', tokenAuth, uploadUserImage);
 app.post('/user', tokenAuth, setUserData);
 app.post('/user/follow', tokenAuth, followUser);
 app.delete('/user/unfollow/:userHandle', tokenAuth, unfollowUser);
+app.get('/user', getAllUserData);
 
 export const api = functions.https.onRequest(app);
