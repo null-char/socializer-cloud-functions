@@ -20,6 +20,7 @@ export const addComment: RequestHandler = async (req, res) => {
       .add(newComment);
     res.status(200).json({ commentId: commentDoc.id, ...newComment });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -48,6 +49,7 @@ export const removeComment: RequestHandler = async (req, res) => {
         .delete();
       res.status(200).json({ message: 'Removed comment successfully' });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ error: 'Server error' });
     }
   } else {
@@ -84,6 +86,7 @@ export const replyToComment: RequestHandler = async (req, res) => {
       .add(newReply);
     res.status(200).json({ replyId: replyDoc.id, ...newReply });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -114,6 +117,7 @@ export const removeReplyToComment: RequestHandler = async (req, res) => {
         .status(200)
         .json({ message: `Reply removed with id ${req.params.replyId}` });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ error: 'Server error' });
     }
   } else {

@@ -15,6 +15,7 @@ export const getAllPosts: RequestHandler = async (req, res) => {
     });
     return res.status(200).json(docData);
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ error: 'Server error' });
   }
 };
@@ -38,6 +39,7 @@ export const getPost: RequestHandler = async (req, res) => {
     };
     res.status(200).json(postData);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -54,6 +56,7 @@ export const addPost: RequestHandler = async (req, res) => {
     const postDoc = await db.collection('posts').add(newPost);
     return res.json({ postId: postDoc.id, ...newPost });
   } catch (err) {
+    console.error(err);
     return res
       .status(500)
       .json({ error: 'Something went wrong with the server' });
@@ -76,6 +79,7 @@ export const removePost: RequestHandler = async (req, res) => {
         .delete();
       res.status(200).json({ message: `Post deleted with id ${postDoc.id}` });
     } catch (err) {
+      console.error(err);
       res.status(500).json({ error: 'Server error' });
     }
   } else {

@@ -18,6 +18,7 @@ export const likePost: RequestHandler = async (req, res) => {
       message: `Like added successfully to post with post id ${req.body.postId}`
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -38,6 +39,7 @@ export const unlikePost: RequestHandler = async (req, res) => {
       message: `Like removed successfully from post with post id ${req.params.postId}`
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
