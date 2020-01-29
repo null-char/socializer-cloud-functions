@@ -18,7 +18,7 @@ export const tokenAuth: RequestHandler = async (req, res, next) => {
         .limit(1)
         .get();
       req.body.user = userDoc.docs[0].data();
-      return next();
+      next();
     } catch (err) {
       // not authorized
       res.status(403).json(err);
