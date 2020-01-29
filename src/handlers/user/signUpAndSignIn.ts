@@ -23,6 +23,7 @@ export const signUp: RequestHandler = async (req, res) => {
         .auth()
         .createUserWithEmailAndPassword(newUser.email, newUser.password);
       const token = userCredentials.user?.getIdToken();
+      const refreshToken = userCredentials.user?.refreshToken;
       const userId = userCredentials.user?.uid;
 
       const userDetails = {
@@ -40,7 +41,8 @@ export const signUp: RequestHandler = async (req, res) => {
 
       // resource created
       return res.status(201).json({
-        token: token
+        token,
+        refreshToken
       });
     } catch (err) {
       if (err.code === 'auth/email-already-in-use') {
@@ -66,9 +68,11 @@ export const signIn: RequestHandler = async (req, res) => {
       .auth()
       .signInWithEmailAndPassword(user.email, user.password);
     const token = await userCredentials.user?.getIdToken();
+    const refreshToken = await userCredentials.user?.refreshToken;
     return res.status(200).json({
       message: `User signed in successfully with user id ${userCredentials.user?.uid}`,
-      token: token
+      token,
+      refreshToken
     });
   } catch (err) {
     switch (err.code) {
