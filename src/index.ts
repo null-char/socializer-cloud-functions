@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as express from 'express';
 import * as firebase from 'firebase';
+import { db } from './utils/admin';
 import { config } from './utils/config';
 import {
   signUp,
@@ -79,3 +80,31 @@ app.delete('/user/unfollow/:userHandle', tokenAuth, unfollowUser);
 app.get('/user', getAllUserData);
 
 export const api = functions.https.onRequest(app);
+export const onPostDelete = functions
+  .region('us-central1')
+  .firestore.document('/posts/{postId}')
+  .onDelete(async (snapshot, context) => {
+    const postId = context.params.postId;
+    const batch = db.batch();
+
+    try {
+      const commentsCollection = await db
+        .doc(`posts/${postId}`)
+        .collection('comments')
+        .get();
+      const likesCollection = await db
+        .doc(`posts/${postId}`)
+        .collection('likes')
+        .get();
+
+      commentsCollection.docs.forEach(comment =>
+        batch.delete(db.doc(`/posts/${postId}/comments/${comment.id}`))
+      );
+      likesCollection.docs.forEach(like =>
+        batch.delete(db.doc(`/posts/${postId}/likes/${like.id}`))
+      );
+      await batch.commit();
+    } catch (err) {
+      console.error(err);
+    }
+  });
