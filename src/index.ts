@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as express from 'express';
 import * as firebase from 'firebase';
+import * as cors from 'cors';
 import { db } from './utils/admin';
 import { config } from './utils/config';
 import {
@@ -10,7 +11,8 @@ import {
   setUserData,
   followUser,
   unfollowUser,
-  getAllUserData
+  getAllUserData,
+  refreshToken
 } from './handlers/user/index';
 import {
   getAllPosts,
@@ -28,6 +30,14 @@ import { tokenAuth } from './utils/tokenAuth';
 
 const app = express();
 firebase.initializeApp(config);
+
+// ONLY FOR TESTING. DO NOT KEEP THIS CODE AS IS IN PRODUCTION
+const corsOptions: cors.CorsOptions = {
+  origin: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 // Get all posts or one post
 app.get('/posts', getAllPosts);
@@ -73,6 +83,7 @@ app.post('/signout', async (req, res) => {
   }
 });
 
+app.post('/user/refresh-token', refreshToken);
 app.post('/user/image', tokenAuth, uploadUserImage);
 app.post('/user', tokenAuth, setUserData);
 app.post('/user/follow', tokenAuth, followUser);
