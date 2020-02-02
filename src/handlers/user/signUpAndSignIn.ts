@@ -16,7 +16,9 @@ export const signUp: RequestHandler = async (req, res) => {
   const userDoc = await db.doc(`/users/${newUser.userHandle}`).get();
   if (userDoc.exists) {
     // return an error if a user with the same handle exists
-    return res.status(400).json({ userHandle: 'This handle is already taken' });
+    return res
+      .status(400)
+      .json({ error: { code: 'auth/username-already-taken' } });
   } else {
     try {
       const userCredentials = await firebase
@@ -45,12 +47,9 @@ export const signUp: RequestHandler = async (req, res) => {
         refreshToken
       });
     } catch (err) {
-      if (err.code === 'auth/email-already-in-use') {
-        return res.status(400).json({ email: 'Email is already in use' });
-      } else {
-        console.error(err);
-        return res.status(500).json({ error: err.code });
-      }
+      if (err.code.includes('auth'))
+        return res.status(400).json({ error: { code: err.code } });
+      return res.status(500).json({ error: { code: 'server/unavailable' } });
     }
   }
 };
@@ -75,20 +74,8 @@ export const signIn: RequestHandler = async (req, res) => {
       refreshToken
     });
   } catch (err) {
-    switch (err.code) {
-      case 'auth/invalid-email':
-        return res.status(400).json({ email: 'The email entered is invalid' });
-      case 'auth/user-disabled':
-        return res.status(403).json({ user: 'Account is disabled' });
-      case 'auth/wrong-password':
-        return res
-          .status(400)
-          .json({ password: 'The password entered is invalid' });
-      case 'auth/user-not-found':
-        return res.status(404).json({ user: 'User not found' });
-      default:
-        console.error(err);
-        return res.status(500).json(err);
-    }
+    if (err.code.includes('auth'))
+      return res.status(400).json({ error: { code: err.code } });
+    return res.status(500).json({ error: { code: 'server/unavailable' } });
   }
 };
