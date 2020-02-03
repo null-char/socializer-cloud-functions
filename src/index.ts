@@ -5,8 +5,7 @@ import * as cors from 'cors';
 import { db } from './utils/admin';
 import { config } from './utils/config';
 import {
-  signUp,
-  signIn,
+  addUser,
   uploadUserImage,
   setUserData,
   followUser,
@@ -70,8 +69,7 @@ app.delete(
 // SIGN UP
 // We'll do stuff like checking if email is not blank or if password is a certain length in the client side code
 
-app.post('/signup', signUp);
-app.post('/signin', signIn);
+app.post('/user/add-user', addUser);
 // temporary. should be done on the client
 app.post('/signout', async (req, res) => {
   try {
