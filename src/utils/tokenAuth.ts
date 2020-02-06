@@ -9,6 +9,7 @@ export const tokenAuth: RequestHandler = async (req, res, next) => {
   ) {
     // token is after the "Bearer ". split the string to get the token
     const token = req.headers.authorization.split('Bearer ')[1];
+
     // Verify token
     try {
       const decodedToken = await admin.auth().verifyIdToken(token);

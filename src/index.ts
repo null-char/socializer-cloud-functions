@@ -10,12 +10,13 @@ import {
   setUserData,
   followUser,
   unfollowUser,
-  getAllUserData,
-  refreshToken
+  getAllUserData
 } from './handlers/user/index';
 import {
   getAllPosts,
   getPost,
+  getComments,
+  getLikes,
   addPost,
   removePost,
   likePost,
@@ -36,11 +37,13 @@ const corsOptions: cors.CorsOptions = {
   optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions));
+app.use('/*', cors(corsOptions));
 
 // Get all posts or one post
 app.get('/posts', getAllPosts);
 app.get('/posts/:postId', getPost);
+app.get('/posts/comments', getComments);
+app.get('/posts/likes', getLikes);
 
 // Add/Remove user posts
 app.post('/posts', tokenAuth, addPost);
@@ -81,12 +84,11 @@ app.post('/signout', async (req, res) => {
   }
 });
 
-app.post('/user/refresh-token', refreshToken);
 app.post('/user/image', tokenAuth, uploadUserImage);
 app.post('/user', tokenAuth, setUserData);
 app.post('/user/follow', tokenAuth, followUser);
 app.delete('/user/unfollow/:userHandle', tokenAuth, unfollowUser);
-app.get('/user', getAllUserData);
+app.get('/user', tokenAuth, getAllUserData);
 
 export const api = functions.https.onRequest(app);
 export const onPostDelete = functions
