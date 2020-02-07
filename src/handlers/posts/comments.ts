@@ -1,6 +1,28 @@
 import { db } from '../../utils/admin';
 import { RequestHandler } from 'express';
 
+export const getComments: RequestHandler = async (req, res) => {
+  const postId = req.params.postId;
+  if (!postId)
+    res.status(400).json({
+      error: {
+        code: 'client/bad-request',
+        message: 'Make sure to specify post id'
+      }
+    });
+
+  try {
+    const commentsCollection = await db
+      .doc(`posts/${postId}`)
+      .collection('comments')
+      .get();
+
+    res.status(200).json(commentsCollection.docs);
+  } catch (err) {
+    res.status(500).json({ error: { code: 'server/unavailable' } });
+  }
+};
+
 export const addComment: RequestHandler = async (req, res) => {
   if (!req.body.postId)
     res
